@@ -1,4 +1,4 @@
-package uk.co.bbc.electionscoreboard.xmlfileunmarshaller;
+package uk.co.bbc.electionscoreboard.xml;
 
 import javax.xml.bind.annotation.XmlElement;
 

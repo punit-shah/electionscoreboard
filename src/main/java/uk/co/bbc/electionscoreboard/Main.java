@@ -1,9 +1,9 @@
 package uk.co.bbc.electionscoreboard;
 
-import uk.co.bbc.electionscoreboard.xmlfileunmarshaller.ConstituencyResult;
-import uk.co.bbc.electionscoreboard.xmlfileunmarshaller.ConstituencyResults;
-import uk.co.bbc.electionscoreboard.xmlfileunmarshaller.Result;
-import uk.co.bbc.electionscoreboard.xmlfileunmarshaller.XmlFileUnmarshaller;
+import uk.co.bbc.electionscoreboard.xml.ConstituencyResult;
+import uk.co.bbc.electionscoreboard.xml.ConstituencyResults;
+import uk.co.bbc.electionscoreboard.xml.Result;
+import uk.co.bbc.electionscoreboard.xml.XmlFileUnmarshaller;
 
 import javax.xml.bind.JAXBException;
 import java.util.List;
