@@ -1,0 +1,38 @@
+# /
+.settings
+.project
+.classpath
+.idea/
+.metadata
+feature-test/fake-sqs/
+
+*/.settings
+*/.classpath
+*/.project
+*/.idea/
+target
+*/target
+
+*.iml
+*.iws
+*.ipr
+*~
+*.swp
+
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# MBT stuff
+SOURCES/
+SPECS/
+
+fake-s3/
+fake-sqs/
+
+tmp/*
+
+.DS_Store
