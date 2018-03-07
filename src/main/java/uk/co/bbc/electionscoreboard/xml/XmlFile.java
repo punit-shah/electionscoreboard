@@ -9,8 +9,9 @@ public class XmlFile {
     private File file;
     private boolean isValid;
 
-    public XmlFile(String pathname) {
-        file = new File(pathname);
+    public XmlFile(String filename) {
+        ClassLoader classLoader = getClass().getClassLoader();
+        file = new File(classLoader.getResource(filename).getFile());
     }
 
     public XmlFile(File file) {

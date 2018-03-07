@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        XmlFile xmlFile = new XmlFile("src/main/resources/xml-files/result001.xml");
+        XmlFile xmlFile = new XmlFile("xml-files/result001.xml");
         ConstituencyResults constituencyResults = xmlFile.toObject();
 
         List<Constituency> constituencyResultsList = constituencyResults.getConstituencies();
