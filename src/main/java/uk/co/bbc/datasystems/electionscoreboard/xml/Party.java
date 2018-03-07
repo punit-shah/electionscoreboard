@@ -1,8 +1,8 @@
-package uk.co.bbc.electionscoreboard.xml;
+package uk.co.bbc.datasystems.electionscoreboard.xml;
 
 import javax.xml.bind.annotation.XmlElement;
 
-public class Result {
+public class Party {
     private String partyCode;
     private int votes;
     private double share;

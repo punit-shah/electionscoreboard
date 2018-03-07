@@ -1,8 +1,7 @@
-package uk.co.bbc.electionscoreboard;
+package uk.co.bbc.datasystems.electionscoreboard;
 
-import uk.co.bbc.electionscoreboard.xml.*;
+import uk.co.bbc.datasystems.electionscoreboard.xml.*;
 
-import javax.xml.bind.JAXBException;
 import java.util.List;
 
 public class Main {
@@ -17,12 +16,11 @@ public class Main {
             System.out.println("constituencyId: " + constituency.getConstituencyId());
             System.out.println(constituency.getConstituencyName());
 
-            List<Result> results = constituency.getResults();
-            System.out.println(results.size());
-            results.forEach(result -> {
-                System.out.println(result.getPartyCode());
-                System.out.println("votes: " + result.getVotes());
-                System.out.println("share: " + result.getShare());
+            List<Party> parties = constituency.getResults();
+            parties.forEach(party -> {
+                System.out.println(party.getPartyCode());
+                System.out.println("votes: " + party.getVotes());
+                System.out.println("share: " + party.getShare());
             });
         });
     }

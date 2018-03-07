@@ -1,4 +1,4 @@
-package uk.co.bbc.electionscoreboard.xml;
+package uk.co.bbc.datasystems.electionscoreboard.xml;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -9,7 +9,7 @@ public class Constituency {
     private int seqNo;
     private int constituencyId;
     private String constituencyName;
-    private List<Result> results;
+    private List<Party> parties;
 
     @XmlAttribute
     public int getSeqNo() {
@@ -40,11 +40,11 @@ public class Constituency {
 
     @XmlElementWrapper(name = "results")
     @XmlElement(name = "result")
-    public List<Result> getResults() {
-        return results;
+    public List<Party> getResults() {
+        return parties;
     }
 
-    public void setResults(List<Result> results) {
-        this.results = results;
+    public void setResults(List<Party> results) {
+        this.parties = results;
     }
 }

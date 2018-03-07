@@ -1,4 +1,4 @@
-package uk.co.bbc.electionscoreboard.xml;
+package uk.co.bbc.datasystems.electionscoreboard.xml;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
