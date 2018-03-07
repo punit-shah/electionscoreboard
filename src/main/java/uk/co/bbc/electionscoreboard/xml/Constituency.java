@@ -5,9 +5,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import java.util.List;
 
-public class ConstituencyResult {
+public class Constituency {
     private int seqNo;
-    private int consituencyId;
+    private int constituencyId;
     private String constituencyName;
     private List<Result> results;
 
@@ -20,13 +20,13 @@ public class ConstituencyResult {
         this.seqNo = seqNo;
     }
 
-    @XmlElement
-    public int getConsituencyId() {
-        return consituencyId;
+    @XmlElement(name = "consituencyId")
+    public int getConstituencyId() {
+        return constituencyId;
     }
 
-    public void setConsituencyId(int consituencyId) {
-        this.consituencyId = consituencyId;
+    public void setConstituencyId(int consituencyId) {
+        this.constituencyId = consituencyId;
     }
 
     @XmlElement

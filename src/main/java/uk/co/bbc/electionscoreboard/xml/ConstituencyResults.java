@@ -1,17 +1,19 @@
 package uk.co.bbc.electionscoreboard.xml;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 @XmlRootElement
 public class ConstituencyResults {
-    private List<ConstituencyResult> constituencyResults;
+    private List<Constituency> constituencies;
 
-    public List<ConstituencyResult> getConstituencyResult() {
-        return constituencyResults;
+    @XmlElement(name = "constituencyResult")
+    public List<Constituency> getConstituencies() {
+        return constituencies;
     }
 
-    public void setConstituencyResult(List<ConstituencyResult> constituencyResult) {
-        this.constituencyResults = constituencyResult;
+    public void setConstituencies(List<Constituency> constituencies) {
+        this.constituencies = constituencies;
     }
 }
