@@ -40,11 +40,11 @@ public class Constituency {
 
     @XmlElementWrapper(name = "results")
     @XmlElement(name = "result")
-    public List<Party> getResults() {
+    public List<Party> getParties() {
         return parties;
     }
 
-    public void setResults(List<Party> results) {
-        this.parties = results;
+    public void setParties(List<Party> parties) {
+        this.parties = parties;
     }
 }
