@@ -11,15 +11,11 @@ public class Main {
     public static void main(String[] args) {
         XmlFileIterator xmlFileIterator = new XmlFileIterator();
 
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                XmlFile xmlFile = xmlFileIterator.requestNextFile();
-                System.out.println(xmlFile.getFilename());
+        Runnable runnable = () -> {
+            XmlFile xmlFile = xmlFileIterator.requestNextFile();
 
-                ConstituencyResults constituencyResults = xmlFile.toObject();
-                printConstituencyResults(constituencyResults);
-            }
+            ConstituencyResults constituencyResults = xmlFile.toObject();
+            printConstituencyResults(constituencyResults);
         };
 
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
@@ -32,12 +28,14 @@ public class Main {
         constituencyResultsList.forEach(constituency -> {
             System.out.println(constituency.getConstituencyName());
 
-            List<Party> parties = constituency.getResults();
-            parties.forEach(party -> {
-                System.out.println(party.getPartyCode() + "\t" + party.getVotes() + "\t" + party.getShare());
-            });
-        });
+            System.out.println(String.format("%s\t%6s\t%s", "Party", "Votes", "Share"));
 
-        System.out.println();
+            List<Party> parties = constituency.getResults();
+            parties.sort((party1, party2) -> party2.getVotes() - party1.getVotes());
+            parties.forEach(party -> System.out.println(
+                String.format("%-5s\t%6d\t%5.1f", party.getPartyCode(), party.getVotes(), party.getShare()))
+            );
+            System.out.println("--------------------------------");
+        });
     }
 }
