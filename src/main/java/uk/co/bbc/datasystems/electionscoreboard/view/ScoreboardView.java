@@ -25,9 +25,13 @@ public class ScoreboardView {
         Runnable runnable = () -> {
             XmlFile xmlFile = xmlFileIterator.requestNextFile();
 
-            ConstituencyResults constituencyResults = xmlFile.toObject();
-            scoreboardController.updateParties(constituencyResults);
-            printTable();
+            if (xmlFile.isValid()) {
+                ConstituencyResults constituencyResults = xmlFile.toObject();
+                scoreboardController.updateParties(constituencyResults);
+                printTable();
+            } else {
+                System.out.println(xmlFile.getFilename() + " is not valid - skipping.");
+            }
         };
 
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);

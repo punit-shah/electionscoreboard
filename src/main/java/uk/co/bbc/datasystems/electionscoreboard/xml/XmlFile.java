@@ -1,16 +1,26 @@
 package uk.co.bbc.datasystems.electionscoreboard.xml;
 
+import org.xml.sax.SAXException;
+
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 import java.io.File;
+import java.io.IOException;
 
 public class XmlFile {
     private File file;
     private String filename;
+    private ClassLoader classLoader;
 
     public XmlFile(String filename) {
-        ClassLoader classLoader = getClass().getClassLoader();
+        classLoader = getClass().getClassLoader();
         file = new File(classLoader.getResource(filename).getFile());
         this.filename = filename;
     }
@@ -27,9 +37,20 @@ public class XmlFile {
         }
     }
 
-    // TODO: implement validation
     public boolean isValid() {
-        return true;
+        File xmlSchema = new File(classLoader.getResource("constituencyResults.xsd").getFile());
+        Source xmlSource = new StreamSource(file);
+        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+        try {
+            Schema schema = schemaFactory.newSchema(xmlSchema);
+            Validator validator = schema.newValidator();
+            validator.validate(xmlSource);
+            return true;
+        } catch (SAXException | IOException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
 
     public File getFile() {
