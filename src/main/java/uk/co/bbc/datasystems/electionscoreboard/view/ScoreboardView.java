@@ -51,9 +51,14 @@ public class ScoreboardView {
         List<Party> topThreeParties = scoreboardController.getTopThreeParties();
         List<Party> partiesNotInTopThree = scoreboardController.getPartiesNotInTopThree();
         Map<String, Double> share = scoreboardController.calculateShare();
-        double partiesNotInTopThreeCombinedShare = 0.0;
 
         System.out.println(String.format("%s\t%5s\t%s", "Party", "Seats", "Share"));
+        printTopThreeParties(topThreeParties, share);
+        printPartiesNotInTopThreeCombined(partiesNotInTopThree, share);
+        System.out.println("----------------------------------------");
+    }
+
+    private void printTopThreeParties(List<Party> topThreeParties, Map<String, Double> share) {
         topThreeParties.forEach(party -> {
             String partyCode = party.getPartyCode();
             int seats = party.getSeats();
@@ -64,6 +69,10 @@ public class ScoreboardView {
 
             System.out.println(seats >= 326 ? partyResultString + " - Majority won" : partyResultString);
         });
+    }
+
+    private void printPartiesNotInTopThreeCombined(List<Party> partiesNotInTopThree, Map<String, Double> share) {
+        double partiesNotInTopThreeCombinedShare = 0.0;
 
         for (Party party: partiesNotInTopThree) {
             partiesNotInTopThreeCombinedShare += share.get(party.getPartyCode());
@@ -75,7 +84,5 @@ public class ScoreboardView {
                 scoreboardController.getTotalSeats(partiesNotInTopThree),
                 partiesNotInTopThreeCombinedShare
         ));
-
-        System.out.println("----------------------------------------");
     }
 }
