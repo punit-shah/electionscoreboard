@@ -6,70 +6,31 @@ import uk.co.bbc.datasystems.electionscoreboard.xml.ConstituencyParty;
 import uk.co.bbc.datasystems.electionscoreboard.xml.ConstituencyResults;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ScoreboardController {
-    private ArrayList<Party> parties;
+    private Map<String, Party> parties;
 
     public ScoreboardController() {
-        parties = new ArrayList<>();
-        parties.add(new Party("LAB"));
-        parties.add(new Party("CON"));
-        parties.add(new Party("LD"));
-        parties.add(new Party("GRN"));
-        parties.add(new Party("UKIP"));
-        parties.add(new Party("PC"));
-        parties.add(new Party("SNP"));
-        parties.add(new Party("SSP"));
-        parties.add(new Party("IND"));
-        parties.add(new Party("OCV"));
-        parties.add(new Party("OTH"));
-        parties.add(new Party("PPS"));
-        parties.add(new Party("SGP"));
-        parties.add(new Party("FSP"));
-        parties.add(new Party("SLP"));
-        parties.add(new Party("SSCP"));
-        parties.add(new Party("PIP"));
-        parties.add(new Party("RES"));
-        parties.add(new Party("SIP"));
-        parties.add(new Party("DDT"));
-        parties.add(new Party("BNP"));
-        parties.add(new Party("CPB"));
-        parties.add(new Party("IKHH"));
-        parties.add(new Party("SUP"));
-        parties.add(new Party("IGV"));
-        parties.add(new Party("PubP"));
-        parties.add(new Party("LIB"));
-        parties.add(new Party("LC"));
-        parties.add(new Party("SF"));
-        parties.add(new Party("SDLP"));
-        parties.add(new Party("DUP"));
-        parties.add(new Party("UUP"));
-        parties.add(new Party("WP"));
-        parties.add(new Party("VFY"));
-        parties.add(new Party("AP"));
-        parties.add(new Party("SEA"));
-    }
-
-    public List<Party> getParties() {
-        sortParties();
-        return parties;
+        parties = new HashMap<>();
     }
 
     public List<Party> getTopThreeParties() {
-        sortParties();
-        return new ArrayList<>(parties.subList(0, 3));
+        List<Party> partyList = getSortedPartyList();
+        return new ArrayList<>(partyList.subList(0, 3));
     }
 
     public List<Party> getPartiesNotInTopThree() {
-        sortParties();
-        return new ArrayList<>(parties.subList(3, parties.size()));
+        List<Party> partyList = getSortedPartyList();
+        return new ArrayList<>(partyList.subList(3, partyList.size()));
     }
 
     public Map<String, Double> calculateShare() {
         Map<String, Double> share = new HashMap<>();
-        double totalVotes = getTotalVotes(parties);
+        ArrayList<Party> partyList = new ArrayList<>(parties.values());
+        double totalVotes = getTotalVotes(partyList);
 
-        parties.forEach(party ->
+        partyList.forEach(party ->
                 share.put(party.getPartyCode(), (double) party.getVotes() / totalVotes * 100.0)
         );
 
@@ -80,6 +41,7 @@ public class ScoreboardController {
         Constituency constituency = constituencyResults.getConstituencies().get(0);
         List<ConstituencyParty> constituencyParties = constituency.getParties();
 
+        addPartiesToMapIfNotPresent(constituencyParties);
         updateVotesForEachParty(constituencyParties);
         updateSeatsForWinningParty(constituencyParties);
     }
@@ -92,9 +54,19 @@ public class ScoreboardController {
         return parties.stream().mapToInt(Party::getSeats).sum();
     }
 
+    private void addPartiesToMapIfNotPresent(List<ConstituencyParty> constituencyParties) {
+        constituencyParties.stream()
+                .map(ConstituencyParty::getPartyCode)
+                .forEach(partyCode -> {
+                    if (parties.get(partyCode) == null) {
+                        parties.put(partyCode, new Party(partyCode));
+                    }
+                });
+    }
+
     private void updateVotesForEachParty(List<ConstituencyParty> constituencyParties) {
         constituencyParties.forEach(constituencyParty ->
-                parties.stream()
+                parties.values().stream()
                         .filter(party -> party.getPartyCode().trim().equals(constituencyParty.getPartyCode().trim()))
                         .findFirst().orElse(null)
                         .updateVotes(constituencyParty.getVotes())
@@ -102,7 +74,7 @@ public class ScoreboardController {
     }
 
     private void updateSeatsForWinningParty(List<ConstituencyParty> constituencyParties) {
-        parties.stream()
+        parties.values().stream()
                 .filter(party ->
                         party.getPartyCode().trim().equals(
                                 getWinningConstituencyParty(constituencyParties).getPartyCode().trim()
@@ -116,7 +88,9 @@ public class ScoreboardController {
         return parties.stream().max(Comparator.comparingDouble(ConstituencyParty::getShare)).orElse(null);
     }
 
-    private void sortParties() {
-        parties.sort((party1, party2) -> party2.getSeats() - party1.getSeats());
+    private List<Party> getSortedPartyList() {
+        return parties.values().stream()
+                .sorted((party1, party2) -> party2.getSeats() - party1.getSeats())
+                .collect(Collectors.toList());
     }
 }
