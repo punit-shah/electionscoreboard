@@ -7,7 +7,11 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        new ScoreboardView().start();
+        try {
+            new ScoreboardView().start();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void printConstituencyResults(ConstituencyResults constituencyResults) {

@@ -8,6 +8,7 @@ import uk.co.bbc.datasystems.electionscoreboard.xml.XmlFileIterator;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -19,11 +20,19 @@ public class ScoreboardView {
         scoreboardController = new ScoreboardController();
     }
 
-    public void start() {
+    public void start() throws InterruptedException {
         XmlFileIterator xmlFileIterator = new XmlFileIterator();
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        CountDownLatch countDownLatch = new CountDownLatch(1);
 
-        Runnable runnable = () -> {
+        executor.scheduleAtFixedRate(() -> {
             XmlFile xmlFile = xmlFileIterator.requestNextFile();
+            if (xmlFile == null) {
+                countDownLatch.countDown();
+                return;
+            }
+
+            System.out.println(xmlFile.getFilename());
 
             if (xmlFile.isValid()) {
                 ConstituencyResults constituencyResults = xmlFile.toObject();
@@ -32,10 +41,10 @@ public class ScoreboardView {
             } else {
                 System.out.println(xmlFile.getFilename() + " is not valid - skipping.");
             }
-        };
+        }, 0, 500, TimeUnit.MILLISECONDS);
 
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-        executor.scheduleAtFixedRate(runnable, 0, 500, TimeUnit.MILLISECONDS);
+        countDownLatch.await();
+        executor.shutdown();
     }
 
     private void printTable() {
