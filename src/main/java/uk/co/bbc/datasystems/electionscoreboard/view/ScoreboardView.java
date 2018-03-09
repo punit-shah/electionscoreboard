@@ -35,7 +35,7 @@ public class ScoreboardView {
         };
 
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-        executor.scheduleAtFixedRate(runnable, 0, 3, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(runnable, 0, 500, TimeUnit.MILLISECONDS);
     }
 
     private void printTable() {
@@ -44,10 +44,10 @@ public class ScoreboardView {
         Map<String, Double> share = scoreboardController.calculateShare();
         double partiesNotInTopThreeCombinedShare = 0.0;
 
-        System.out.println(String.format("%s\t%6s\t%s", "Party", "Votes", "Share"));
+        System.out.println(String.format("%s\t%5s\t%s", "Party", "Seats", "Share"));
         topThreeParties.forEach(party ->
             System.out.println(String.format(
-                    "%-6s\t%6d\t%5.1f", party.getPartyCode(), party.getVotes(), share.get(party.getPartyCode())
+                    "%-6s\t%5d\t%5.1f", party.getPartyCode(), party.getSeats(), share.get(party.getPartyCode())
             ))
         );
 
@@ -56,9 +56,9 @@ public class ScoreboardView {
         }
 
         System.out.println(String.format(
-                "%-6s\t%6d\t%5.1f",
+                "%-6s\t%5d\t%5.1f",
                 "Others",
-                scoreboardController.getTotalVotes(partiesNotInTopThree),
+                scoreboardController.getTotalSeats(partiesNotInTopThree),
                 partiesNotInTopThreeCombinedShare
         ));
 

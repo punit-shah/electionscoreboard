@@ -18,7 +18,7 @@ public class Main {
 
             System.out.println(String.format("%s\t%6s\t%s", "Party", "Votes", "Share"));
 
-            List<Party> parties = constituency.getParties();
+            List<ConstituencyParty> parties = constituency.getParties();
             parties.sort((party1, party2) -> party2.getVotes() - party1.getVotes());
             parties.forEach(party -> System.out.println(
                 String.format("%-5s\t%6d\t%5.1f", party.getPartyCode(), party.getVotes(), party.getShare()))

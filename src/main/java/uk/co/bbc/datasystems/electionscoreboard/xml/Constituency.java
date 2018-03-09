@@ -9,7 +9,7 @@ public class Constituency {
     private int seqNo;
     private int constituencyId;
     private String constituencyName;
-    private List<Party> parties;
+    private List<ConstituencyParty> parties;
 
     @XmlAttribute
     public int getSeqNo() {
@@ -40,11 +40,11 @@ public class Constituency {
 
     @XmlElementWrapper(name = "results")
     @XmlElement(name = "result")
-    public List<Party> getParties() {
+    public List<ConstituencyParty> getParties() {
         return parties;
     }
 
-    public void setParties(List<Party> parties) {
+    public void setParties(List<ConstituencyParty> parties) {
         this.parties = parties;
     }
 }
