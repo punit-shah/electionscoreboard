@@ -45,11 +45,16 @@ public class ScoreboardView {
         double partiesNotInTopThreeCombinedShare = 0.0;
 
         System.out.println(String.format("%s\t%5s\t%s", "Party", "Seats", "Share"));
-        topThreeParties.forEach(party ->
-            System.out.println(String.format(
-                    "%-6s\t%5d\t%5.1f", party.getPartyCode(), party.getSeats(), share.get(party.getPartyCode())
-            ))
-        );
+        topThreeParties.forEach(party -> {
+            String partyCode = party.getPartyCode();
+            int seats = party.getSeats();
+
+            String partyResultString = String.format(
+                    "%-6s\t%5d\t%5.1f", partyCode, party.getSeats(), share.get(partyCode)
+            );
+
+            System.out.println(seats >= 326 ? partyResultString + " - Majority won" : partyResultString);
+        });
 
         for (Party party: partiesNotInTopThree) {
             partiesNotInTopThreeCombinedShare += share.get(party.getPartyCode());
