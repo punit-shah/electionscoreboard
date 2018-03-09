@@ -32,8 +32,6 @@ public class ScoreboardView {
                 return;
             }
 
-            System.out.println(xmlFile.getFilename());
-
             if (xmlFile.isValid()) {
                 ConstituencyResults constituencyResults = xmlFile.toObject();
                 scoreboardController.updateParties(constituencyResults);
