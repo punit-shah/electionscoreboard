@@ -15,10 +15,39 @@ public class ScoreboardController {
         parties.add(new Party("LAB"));
         parties.add(new Party("CON"));
         parties.add(new Party("LD"));
-        parties.add(new Party("PC"));
-        parties.add(new Party("UKIP"));
         parties.add(new Party("GRN"));
+        parties.add(new Party("UKIP"));
+        parties.add(new Party("PC"));
+        parties.add(new Party("SNP"));
+        parties.add(new Party("SSP"));
+        parties.add(new Party("IND"));
+        parties.add(new Party("OCV"));
         parties.add(new Party("OTH"));
+        parties.add(new Party("PPS"));
+        parties.add(new Party("SGP"));
+        parties.add(new Party("FSP"));
+        parties.add(new Party("SLP"));
+        parties.add(new Party("SSCP"));
+        parties.add(new Party("PIP"));
+        parties.add(new Party("RES"));
+        parties.add(new Party("SIP"));
+        parties.add(new Party("DDT"));
+        parties.add(new Party("BNP"));
+        parties.add(new Party("CPB"));
+        parties.add(new Party("IKHH"));
+        parties.add(new Party("SUP"));
+        parties.add(new Party("IGV"));
+        parties.add(new Party("PubP"));
+        parties.add(new Party("LIB"));
+        parties.add(new Party("LC"));
+        parties.add(new Party("SF"));
+        parties.add(new Party("SDLP"));
+        parties.add(new Party("DUP"));
+        parties.add(new Party("UUP"));
+        parties.add(new Party("WP"));
+        parties.add(new Party("VFY"));
+        parties.add(new Party("AP"));
+        parties.add(new Party("SEA"));
     }
 
     public List<Party> getParties() {
