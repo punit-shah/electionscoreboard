@@ -37,7 +37,14 @@ public class ScoreboardModel {
 
     public List<Party> getSortedPartyList() {
         return parties.values().stream()
-                .sorted((party1, party2) -> party2.getSeats() - party1.getSeats())
+                .sorted((party1, party2) -> {
+                    int seatsComparison = party2.getSeats() - party1.getSeats();
+                    if (seatsComparison != 0) {
+                        return seatsComparison;
+                    } else {
+                        return party2.getVotes() - party1.getVotes();
+                    }
+                })
                 .collect(Collectors.toList());
     }
 
