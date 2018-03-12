@@ -21,7 +21,12 @@ public class XmlFile {
 
     public XmlFile(String filename) {
         classLoader = getClass().getClassLoader();
-        file = new File(classLoader.getResource(filename).getFile());
+        try {
+            file = new File(classLoader.getResource(filename).getFile());
+        } catch (NullPointerException e) {
+            System.err.println(filename + " not found in resources.");
+            return;
+        }
         this.filename = filename;
     }
 
