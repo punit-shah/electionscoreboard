@@ -13,7 +13,7 @@ public class ScoreboardModel {
         parties = new HashMap<>();
     }
 
-    public void addParty(String partyCode) {
+    private void addParty(String partyCode) {
         parties.put(partyCode, new Party(partyCode));
     }
 
