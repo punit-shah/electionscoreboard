@@ -53,7 +53,7 @@ public class ScoreboardView {
         System.out.println(String.format("%s\t%5s\t%s", "Party", "Seats", "Share"));
         printTopThreeParties(topThreeParties, share);
         printPartiesNotInTopThreeCombined(partiesNotInTopThree, share);
-        System.out.println("----------------------------------------");
+        System.out.println("------------------------------------");
     }
 
     private void printTopThreeParties(List<Party> topThreeParties, Map<String, Double> share) {
