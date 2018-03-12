@@ -1,0 +1,21 @@
+<constituencyResults>
+    <constituencyResult seqNo="123">
+        <consituencyId>123</consituencyId>
+        <constituencyName>TestConstituency</constituencyName>
+        <results>
+            <result>
+                <partyCode>P1</partyCode>
+                <votes>1234</votes>
+            </result>
+            <result>
+                <partyCode>P2</partyCode>
+            </result>
+            <result>
+                <partyCode>P3</partyCode>
+            </result>
+            <result>
+                <partyCode>P4</partyCode>
+            </result>
+        </results>
+    </constituencyResult>
+</constituencyResults>

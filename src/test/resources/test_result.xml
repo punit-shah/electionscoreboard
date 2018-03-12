@@ -1,0 +1,28 @@
+<constituencyResults>
+    <constituencyResult seqNo="123">
+        <consituencyId>123</consituencyId>
+        <constituencyName>TestConstituency</constituencyName>
+        <results>
+            <result>
+                <partyCode>P1</partyCode>
+                <votes>400</votes>
+                <share>40.00</share>
+            </result>
+            <result>
+                <partyCode>P2</partyCode>
+                <votes>200</votes>
+                <share>20.00</share>
+            </result>
+            <result>
+                <partyCode>P3</partyCode>
+                <votes>150</votes>
+                <share>15.00</share>
+            </result>
+            <result>
+                <partyCode>P4</partyCode>
+                <votes>250</votes>
+                <share>25.00</share>
+            </result>
+        </results>
+    </constituencyResult>
+</constituencyResults>
