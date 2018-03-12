@@ -1,7 +1,7 @@
 package uk.co.bbc.datasystems.electionscoreboard.view;
 
 import uk.co.bbc.datasystems.electionscoreboard.controller.ScoreboardController;
-import uk.co.bbc.datasystems.electionscoreboard.domain.Party;
+import uk.co.bbc.datasystems.electionscoreboard.model.Party;
 import uk.co.bbc.datasystems.electionscoreboard.xml.ConstituencyResults;
 import uk.co.bbc.datasystems.electionscoreboard.xml.XmlFile;
 import uk.co.bbc.datasystems.electionscoreboard.xml.XmlFileIterator;
@@ -39,7 +39,7 @@ public class ScoreboardView {
             } else {
                 System.out.println(xmlFile.getFilename() + " is not valid - skipping.");
             }
-        }, 0, 500, TimeUnit.MILLISECONDS);
+        }, 0, 250, TimeUnit.MILLISECONDS);
 
         countDownLatch.await();
         executor.shutdown();

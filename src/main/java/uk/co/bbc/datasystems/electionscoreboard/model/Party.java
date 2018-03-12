@@ -1,4 +1,4 @@
-package uk.co.bbc.datasystems.electionscoreboard.domain;
+package uk.co.bbc.datasystems.electionscoreboard.model;
 
 public class Party {
     private String partyCode;

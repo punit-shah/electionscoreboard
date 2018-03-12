@@ -1,33 +1,33 @@
 package uk.co.bbc.datasystems.electionscoreboard.controller;
 
-import uk.co.bbc.datasystems.electionscoreboard.domain.Party;
+import uk.co.bbc.datasystems.electionscoreboard.model.Party;
+import uk.co.bbc.datasystems.electionscoreboard.model.ScoreboardModel;
 import uk.co.bbc.datasystems.electionscoreboard.xml.Constituency;
 import uk.co.bbc.datasystems.electionscoreboard.xml.ConstituencyParty;
 import uk.co.bbc.datasystems.electionscoreboard.xml.ConstituencyResults;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ScoreboardController {
-    private Map<String, Party> parties;
+    private ScoreboardModel scoreboardModel;
 
     public ScoreboardController() {
-        parties = new HashMap<>();
+        scoreboardModel = new ScoreboardModel();
     }
 
     public List<Party> getTopThreeParties() {
-        List<Party> partyList = getSortedPartyList();
+        List<Party> partyList = scoreboardModel.getSortedPartyList();
         return new ArrayList<>(partyList.subList(0, 3));
     }
 
     public List<Party> getPartiesNotInTopThree() {
-        List<Party> partyList = getSortedPartyList();
+        List<Party> partyList = scoreboardModel.getSortedPartyList();
         return new ArrayList<>(partyList.subList(3, partyList.size()));
     }
 
     public Map<String, Double> calculateShare() {
         Map<String, Double> share = new HashMap<>();
-        ArrayList<Party> partyList = new ArrayList<>(parties.values());
+        List<Party> partyList = scoreboardModel.getPartyList();
         double totalVotes = getTotalVotes(partyList);
 
         partyList.forEach(party ->
@@ -57,40 +57,21 @@ public class ScoreboardController {
     private void addPartiesToMapIfNotPresent(List<ConstituencyParty> constituencyParties) {
         constituencyParties.stream()
                 .map(ConstituencyParty::getPartyCode)
-                .forEach(partyCode -> {
-                    if (parties.get(partyCode) == null) {
-                        parties.put(partyCode, new Party(partyCode));
-                    }
-                });
+                .forEach(partyCode -> scoreboardModel.addPartyIfNotPresent(partyCode));
     }
 
     private void updateVotesForEachParty(List<ConstituencyParty> constituencyParties) {
         constituencyParties.forEach(constituencyParty ->
-                parties.values().stream()
-                        .filter(party -> party.getPartyCode().trim().equals(constituencyParty.getPartyCode().trim()))
-                        .findFirst().orElse(null)
-                        .updateVotes(constituencyParty.getVotes())
+                scoreboardModel.updateVotesForParty(constituencyParty.getPartyCode(), constituencyParty.getVotes())
         );
     }
 
     private void updateSeatsForWinningParty(List<ConstituencyParty> constituencyParties) {
-        parties.values().stream()
-                .filter(party ->
-                        party.getPartyCode().trim().equals(
-                                getWinningConstituencyParty(constituencyParties).getPartyCode().trim()
-                        )
-                )
-                .findFirst().orElse(null)
-                .winSeat();
+        ConstituencyParty winningParty = getWinningConstituencyParty(constituencyParties);
+        scoreboardModel.incrementSeatsForParty(winningParty.getPartyCode().trim());
     }
 
     private ConstituencyParty getWinningConstituencyParty(List<ConstituencyParty> parties) {
         return parties.stream().max(Comparator.comparingDouble(ConstituencyParty::getShare)).orElse(null);
-    }
-
-    private List<Party> getSortedPartyList() {
-        return parties.values().stream()
-                .sorted((party1, party2) -> party2.getSeats() - party1.getSeats())
-                .collect(Collectors.toList());
     }
 }
