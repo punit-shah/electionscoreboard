@@ -5,7 +5,7 @@ public class Party {
     private int votes;
     private int seats;
 
-    public Party(String partyCode) {
+    Party(String partyCode) {
         this.partyCode = partyCode;
         votes = 0;
         seats = 0;
