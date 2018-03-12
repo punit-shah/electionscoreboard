@@ -68,7 +68,7 @@ public class ScoreboardController {
 
     private void updateSeatsForWinningParty(List<ConstituencyParty> constituencyParties) {
         ConstituencyParty winningParty = getWinningConstituencyParty(constituencyParties);
-        scoreboardModel.incrementSeatsForParty(winningParty.getPartyCode().trim());
+        scoreboardModel.incrementSeatsForParty(winningParty.getPartyCode());
     }
 
     private ConstituencyParty getWinningConstituencyParty(List<ConstituencyParty> parties) {
