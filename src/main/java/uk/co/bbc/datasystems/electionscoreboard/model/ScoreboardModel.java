@@ -13,7 +13,7 @@ public class ScoreboardModel {
         parties = new HashMap<>();
     }
 
-    private void addParty(String partyCode) {
+    private void addPartyToMap(String partyCode) {
         parties.put(partyCode, new Party(partyCode));
     }
 
@@ -21,9 +21,9 @@ public class ScoreboardModel {
         return parties.get(partyCode) != null;
     }
 
-    public void addPartyIfNotPresent(String partyCode) {
+    public void addParty(String partyCode) {
         if (!checkPartyIsPresent(partyCode)) {
-            addParty(partyCode);
+            addPartyToMap(partyCode);
         }
     }
 

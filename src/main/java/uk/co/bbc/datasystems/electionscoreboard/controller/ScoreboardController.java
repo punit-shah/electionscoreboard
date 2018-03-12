@@ -41,7 +41,7 @@ public class ScoreboardController {
         Constituency constituency = constituencyResults.getConstituencies().get(0);
         List<ConstituencyParty> constituencyParties = constituency.getParties();
 
-        addPartiesToMapIfNotPresent(constituencyParties);
+        addParties(constituencyParties);
         updateVotesForEachParty(constituencyParties);
         updateSeatsForWinningParty(constituencyParties);
     }
@@ -54,10 +54,10 @@ public class ScoreboardController {
         return parties.stream().mapToInt(Party::getSeats).sum();
     }
 
-    private void addPartiesToMapIfNotPresent(List<ConstituencyParty> constituencyParties) {
+    private void addParties(List<ConstituencyParty> constituencyParties) {
         constituencyParties.stream()
                 .map(ConstituencyParty::getPartyCode)
-                .forEach(partyCode -> scoreboardModel.addPartyIfNotPresent(partyCode));
+                .forEach(partyCode -> scoreboardModel.addParty(partyCode));
     }
 
     private void updateVotesForEachParty(List<ConstituencyParty> constituencyParties) {
