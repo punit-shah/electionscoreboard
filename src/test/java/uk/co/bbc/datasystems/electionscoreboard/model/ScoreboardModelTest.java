@@ -40,18 +40,24 @@ public class ScoreboardModelTest {
         scoreboardModel.addParty("P2");
         scoreboardModel.addParty("P3");
 
-        // P1 has 2 seats
-        scoreboardModel.getParties().get("P1").winSeat();
-        scoreboardModel.getParties().get("P1").winSeat();
+        // P1 has 1 seat and 500 votes
+        Party p1 = scoreboardModel.getParties().get("P1");
+        p1.winSeat();
+        p1.updateVotes(500);
 
-        // P2 has 1 seat
-        scoreboardModel.getParties().get("P2").winSeat();
+        // P2 has 1 seat and 300 votes
+        Party p2 = scoreboardModel.getParties().get("P2");
+        p2.winSeat();
+        p2.updateVotes(300);
 
-        // P3 has 3 seats
-        scoreboardModel.getParties().get("P3").winSeat();
-        scoreboardModel.getParties().get("P3").winSeat();
-        scoreboardModel.getParties().get("P3").winSeat();
+        // P3 has 3 seats and 1000 votes
+        Party p3 = scoreboardModel.getParties().get("P3");
+        p3.winSeat();
+        p3.winSeat();
+        p3.winSeat();
+        p3.updateVotes(1000);
 
+        // list should be sorted by seats then votes
         List<Party> sortedPartyList = scoreboardModel.getSortedPartyList();
         assertEquals("P3", sortedPartyList.get(0).getPartyCode());
         assertEquals("P1", sortedPartyList.get(1).getPartyCode());
