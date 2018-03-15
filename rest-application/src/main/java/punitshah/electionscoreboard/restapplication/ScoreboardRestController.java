@@ -1,10 +1,10 @@
 package punitshah.electionscoreboard.restapplication;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import punitshah.electionscoreboard.scoreboard.controller.ScoreboardController;
 import punitshah.electionscoreboard.scoreboard.model.ConstituencyResults;
 import punitshah.electionscoreboard.scoreboard.model.Party;
@@ -39,6 +39,20 @@ public class ScoreboardRestController {
         scoreboard += "</pre>";
 
         return scoreboard;
+    }
+
+    @GetMapping("/parties")
+    public List<Party> getParties() {
+        return scoreboardController.getPartyList();
+    }
+
+    @GetMapping("/parties/{partyCode}")
+    public ResponseEntity<Party> getParty(@PathVariable(name = "partyCode") String partyCode) {
+        return scoreboardController.getPartyList().stream()
+                .filter(party -> party.getPartyCode().equals(partyCode))
+                .findFirst()
+                .map(party -> new ResponseEntity<>(party, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     private String topThreePartiesToString(List<Party> topThreeParties, Map<String, Double> share) {

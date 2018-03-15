@@ -11,6 +11,14 @@ public class ScoreboardController {
         scoreboardModel = new ScoreboardModel();
     }
 
+    public List<Party> getPartyList() {
+        return scoreboardModel.getPartyList();
+    }
+
+    public List<Party> getSortedPartyList() {
+        return scoreboardModel.getSortedPartyList();
+    }
+
     public List<Party> getTopThreeParties() {
         List<Party> partyList = scoreboardModel.getSortedPartyList();
         return new ArrayList<>(partyList.subList(0, 3));
