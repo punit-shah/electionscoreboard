@@ -1,5 +1,6 @@
 package punitshah.electionscoreboard.restapplication;
 
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,7 +22,7 @@ public class ScoreboardRestController {
     }
 
     @PostMapping("/constituency-results")
-    public void postConstituencyResults(@RequestBody ConstituencyResults constituencyResults) {
+    public void postConstituencyResults(@Validated @RequestBody ConstituencyResults constituencyResults) {
         scoreboardController.updateParties(constituencyResults);
     }
 

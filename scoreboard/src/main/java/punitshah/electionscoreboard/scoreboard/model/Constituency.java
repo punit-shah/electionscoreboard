@@ -1,5 +1,8 @@
 package punitshah.electionscoreboard.scoreboard.model;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -8,7 +11,12 @@ import java.util.List;
 public class Constituency {
     private int seqNo;
     private int constituencyId;
+
+    @NotBlank(message = "consituencyName cannot be blank")
     private String constituencyName;
+
+    @NotEmpty(message = "results cannot be empty")
+    @Valid
     private List<ConstituencyParty> parties;
 
     @XmlAttribute

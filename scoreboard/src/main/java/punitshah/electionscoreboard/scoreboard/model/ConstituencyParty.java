@@ -1,9 +1,13 @@
 package punitshah.electionscoreboard.scoreboard.model;
 
+import javax.validation.constraints.NotBlank;
+
 import javax.xml.bind.annotation.XmlElement;
 
 public class ConstituencyParty {
+    @NotBlank(message = "partyCode cannot be blank")
     private String partyCode;
+
     private int votes;
     private double share;
 
