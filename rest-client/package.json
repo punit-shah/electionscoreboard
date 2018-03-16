@@ -1,0 +1,12 @@
+{
+  "name": "election-scoreboard-rest-client",
+  "version": "0.1.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "node-rest-client": "^3.1.0"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}
