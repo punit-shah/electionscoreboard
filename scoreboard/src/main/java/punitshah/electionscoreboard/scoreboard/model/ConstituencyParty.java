@@ -17,7 +17,7 @@ public class ConstituencyParty {
     }
 
     public void setPartyCode(String partyCode) {
-        this.partyCode = partyCode;
+        this.partyCode = partyCode.trim();
     }
 
     @XmlElement
