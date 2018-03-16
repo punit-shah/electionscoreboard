@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const readline = require('readline');
-const XmlFilePoster = require('./xml-file-poster');
+const readline = require("readline");
+const XmlFilePoster = require("./xml-file-poster");
 
 function* makeFilenameGenerator() {
   let index = 0;
@@ -18,18 +18,20 @@ function start() {
   const xmlFilePoster = new XmlFilePoster();
 
   const filenameGenerator = makeFilenameGenerator();
-  process.stdin.on('keypress', (str, key) => {
-    if ((key.ctrl && key.name === 'c') || key.name == 'escape') {
+  process.stdin.on("keypress", (str, key) => {
+    if ((key.ctrl && key.name === "c") || key.name == "escape") {
       process.exit();
     }
 
-    const filename = filenameGenerator.next().value;
-    if (filename) {
-      console.log(`posting ${filename}`);
-      xmlFilePoster.post(filename);
+    if (key.name === "space") {
+      const filename = filenameGenerator.next().value;
+      if (filename) {
+        console.log(`posting ${filename}`);
+        xmlFilePoster.post(filename);
+      }
     }
   });
-  console.log('Press space to post an xml file or escape to quit.\n');
+  console.log("Press space to post an xml file or escape to quit.\n");
 }
 
 start();

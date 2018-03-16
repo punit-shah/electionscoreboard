@@ -21,6 +21,9 @@ class XmlFilePoster {
       args,
       (data, response) => {
         console.log(response.statusCode);
+        data.errors.forEach(e =>
+          e.defaultMessage ? console.log(e.defaultMessage) : undefined
+        );
       }
     );
   }
