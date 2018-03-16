@@ -60,19 +60,19 @@ public class ScoreboardController {
 
     private void addParties(List<ConstituencyParty> constituencyParties) {
         constituencyParties.stream()
-                .map(ConstituencyParty::getPartyCode)
+                .map(constituencyParty -> constituencyParty.getPartyCode().trim())
                 .forEach(partyCode -> scoreboardModel.addParty(partyCode));
     }
 
     private void updateVotesForEachParty(List<ConstituencyParty> constituencyParties) {
         constituencyParties.forEach(constituencyParty ->
-                scoreboardModel.updateVotesForParty(constituencyParty.getPartyCode(), constituencyParty.getVotes())
+                scoreboardModel.updateVotesForParty(constituencyParty.getPartyCode().trim(), constituencyParty.getVotes())
         );
     }
 
     private void updateSeatsForWinningParty(List<ConstituencyParty> constituencyParties) {
         ConstituencyParty winningParty = getWinningConstituencyParty(constituencyParties);
-        scoreboardModel.incrementSeatsForParty(winningParty.getPartyCode());
+        scoreboardModel.incrementSeatsForParty(winningParty.getPartyCode().trim());
     }
 
     private ConstituencyParty getWinningConstituencyParty(List<ConstituencyParty> parties) {
