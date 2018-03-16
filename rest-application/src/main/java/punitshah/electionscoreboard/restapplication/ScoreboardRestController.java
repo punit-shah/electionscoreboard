@@ -47,6 +47,15 @@ public class ScoreboardRestController {
         return scoreboardController.getSortedConstituencyList();
     }
 
+    @GetMapping("/constituencies/{constituencyId}")
+    public ResponseEntity<Constituency> getConstituency(@PathVariable(name = "constituencyId") int constituencyId) {
+        return scoreboardController.getConstituencyList().stream()
+                .filter(constituency -> constituency.getConstituencyId() == constituencyId)
+                .findFirst()
+                .map(constituency -> new ResponseEntity<>(constituency, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
     @GetMapping("/scoreboard")
     public String getScoreboard() {
         List<Party> topThreeParties = scoreboardController.getTopThreeParties();
