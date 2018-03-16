@@ -43,7 +43,7 @@ public class ScoreboardRestController {
 
     @GetMapping("/parties")
     public List<Party> getParties() {
-        return scoreboardController.getPartyList();
+        return scoreboardController.getSortedPartyList();
     }
 
     @GetMapping("/parties/{partyCode}")
