@@ -8,9 +8,11 @@ import java.util.stream.Collectors;
 
 public class ScoreboardModel {
     private Map<String, Party> parties;
+    private List<Constituency> constituencies;
 
     public ScoreboardModel() {
         parties = new HashMap<>();
+        constituencies = new ArrayList<>();
     }
 
     private void addPartyToMap(String partyCode) {
@@ -25,6 +27,14 @@ public class ScoreboardModel {
         if (!checkPartyIsPresent(partyCode)) {
             addPartyToMap(partyCode);
         }
+    }
+
+    public List<Constituency> getConstituencies() {
+        return constituencies;
+    }
+
+    public void addConstituency(Constituency constituency) {
+        this.constituencies.add(constituency);
     }
 
     public Map<String, Party> getParties() {

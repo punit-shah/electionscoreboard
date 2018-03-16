@@ -11,6 +11,15 @@ public class ScoreboardController {
         scoreboardModel = new ScoreboardModel();
     }
 
+    public List<Constituency> getConstituencyList() {
+        return scoreboardModel.getConstituencies();
+    }
+
+    public void updateConstituencies(ConstituencyResults constituencyResults) {
+        Constituency constituency = constituencyResults.getConstituencies().get(0);
+        scoreboardModel.addConstituency(constituency);
+    }
+
     public List<Party> getPartyList() {
         return scoreboardModel.getPartyList();
     }
