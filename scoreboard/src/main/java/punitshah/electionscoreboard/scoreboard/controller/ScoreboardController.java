@@ -12,7 +12,11 @@ public class ScoreboardController {
     }
 
     public List<Constituency> getConstituencyList() {
-        return scoreboardModel.getConstituencies();
+        return scoreboardModel.getConstituencyList();
+    }
+
+    public List<Constituency> getSortedConstituencyList() {
+        return scoreboardModel.getSortedConstituencyList();
     }
 
     public void updateConstituencies(ConstituencyResults constituencyResults) {

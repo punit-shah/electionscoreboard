@@ -1,9 +1,6 @@
 package punitshah.electionscoreboard.scoreboard.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ScoreboardModel {
@@ -29,12 +26,18 @@ public class ScoreboardModel {
         }
     }
 
-    public List<Constituency> getConstituencies() {
+    public List<Constituency> getConstituencyList() {
         return constituencies;
     }
 
+    public List<Constituency> getSortedConstituencyList() {
+        return constituencies.stream()
+                .sorted(Comparator.comparingInt(Constituency::getConstituencyId))
+                .collect(Collectors.toList());
+    }
+
     public void addConstituency(Constituency constituency) {
-        this.constituencies.add(constituency);
+        constituencies.add(constituency);
     }
 
     public Map<String, Party> getParties() {

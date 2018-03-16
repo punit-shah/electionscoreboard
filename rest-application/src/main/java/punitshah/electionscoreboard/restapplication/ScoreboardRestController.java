@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import punitshah.electionscoreboard.scoreboard.controller.ScoreboardController;
+import punitshah.electionscoreboard.scoreboard.model.Constituency;
 import punitshah.electionscoreboard.scoreboard.model.ConstituencyResults;
 import punitshah.electionscoreboard.scoreboard.model.Party;
 
@@ -23,7 +24,27 @@ public class ScoreboardRestController {
 
     @PostMapping("/constituency-results")
     public void postConstituencyResults(@Validated @RequestBody ConstituencyResults constituencyResults) {
+        scoreboardController.updateConstituencies(constituencyResults);
         scoreboardController.updateParties(constituencyResults);
+    }
+
+    @GetMapping("/parties")
+    public List<Party> getParties() {
+        return scoreboardController.getSortedPartyList();
+    }
+
+    @GetMapping("/parties/{partyCode}")
+    public ResponseEntity<Party> getParty(@PathVariable(name = "partyCode") String partyCode) {
+        return scoreboardController.getPartyList().stream()
+                .filter(party -> party.getPartyCode().equals(partyCode))
+                .findFirst()
+                .map(party -> new ResponseEntity<>(party, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/constituencies")
+    public List<Constituency> getConstituencies() {
+        return scoreboardController.getSortedConstituencyList();
     }
 
     @GetMapping("/scoreboard")
@@ -39,20 +60,6 @@ public class ScoreboardRestController {
         scoreboard += "</pre>";
 
         return scoreboard;
-    }
-
-    @GetMapping("/parties")
-    public List<Party> getParties() {
-        return scoreboardController.getSortedPartyList();
-    }
-
-    @GetMapping("/parties/{partyCode}")
-    public ResponseEntity<Party> getParty(@PathVariable(name = "partyCode") String partyCode) {
-        return scoreboardController.getPartyList().stream()
-                .filter(party -> party.getPartyCode().equals(partyCode))
-                .findFirst()
-                .map(party -> new ResponseEntity<>(party, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     private String topThreePartiesToString(List<Party> topThreeParties, Map<String, Double> share) {
