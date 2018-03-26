@@ -62,10 +62,10 @@ public class ScoreboardView {
             int seats = party.getSeats();
 
             String partyResultString = String.format(
-                    "%-6s\t%5d\t%5.1f", partyCode, party.getSeats(), share.get(partyCode)
+                    "%-6s\t%5d\t%5.1f", partyCode, seats, share.get(partyCode)
             );
 
-            System.out.println(seats >= 326 ? partyResultString + " - Majority won" : partyResultString);
+            System.out.println(party.isMajorityWon() ? partyResultString + " - Majority won" : partyResultString);
         });
     }
 
