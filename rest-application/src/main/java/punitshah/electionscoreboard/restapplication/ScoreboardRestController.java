@@ -10,9 +10,9 @@ import punitshah.electionscoreboard.scoreboard.model.Constituency;
 import punitshah.electionscoreboard.scoreboard.model.ConstituencyResults;
 import punitshah.electionscoreboard.scoreboard.model.Party;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 public class ScoreboardRestController {
@@ -61,50 +61,37 @@ public class ScoreboardRestController {
     }
 
     @GetMapping("/scoreboard")
-    public String getScoreboard() {
+    public Map<String, Map<String, Object>> getScoreboard() {
         List<Party> topThreeParties = scoreboardController.getTopThreeParties();
         List<Party> partiesNotInTopThree = scoreboardController.getPartiesNotInTopThree();
         Map<String, Double> share = scoreboardController.calculateShare();
 
-        String scoreboard = "<pre>";
-        scoreboard += String.format("%s\t%5s\t%s<br>", "Party", "Seats", "Share");
-        scoreboard += topThreePartiesToString(topThreeParties, share) + "<br>";
-        scoreboard += partiesNotInTopThreeCombinedToString(partiesNotInTopThree, share) + "<br>";
-        scoreboard += "</pre>";
+        Map<String, Map<String, Object>> scoreboard = new LinkedHashMap<>();
 
-        return scoreboard;
-    }
+        topThreeParties.forEach(party -> {
+            Map<String, Object> scoreboardEntry = new LinkedHashMap<>();
 
-    private String topThreePartiesToString(List<Party> topThreeParties, Map<String, Double> share) {
-        return String.join(
-                "<br>",
-                topThreeParties.stream()
-                        .map(party -> {
-                            String partyCode = party.getPartyCode();
-                            int seats = party.getSeats();
+            String partyCode = party.getPartyCode();
 
-                            String partyResultString = String.format(
-                                    "%-6s\t%5d\t%5.1f", partyCode, seats, share.get(partyCode)
-                            );
+            scoreboardEntry.put("seats", party.getSeats());
+            scoreboardEntry.put("share", share.get(partyCode));
+            scoreboardEntry.put("majorityWon", party.isMajorityWon());
 
-                            return party.isMajorityWon() ? partyResultString + " - Majority won" : partyResultString;
-                        })
-                        .collect(Collectors.toList())
-        );
-    }
+            scoreboard.put(partyCode, scoreboardEntry);
+        });
 
-    private String partiesNotInTopThreeCombinedToString(List<Party> partiesNotInTopThree, Map<String, Double> share) {
+        Map<String, Object> partiesNotInTopThreeCombinedScoreboardEntry = new LinkedHashMap<>();
         double partiesNotInTopThreeCombinedShare = 0.0;
 
         for (Party party: partiesNotInTopThree) {
             partiesNotInTopThreeCombinedShare += share.get(party.getPartyCode());
         }
 
-        return String.format(
-                "%-6s\t%5d\t%5.1f",
-                "Others",
-                scoreboardController.getTotalSeats(partiesNotInTopThree),
-                partiesNotInTopThreeCombinedShare
-        );
+        partiesNotInTopThreeCombinedScoreboardEntry.put("seats", scoreboardController.getTotalSeats(partiesNotInTopThree));
+        partiesNotInTopThreeCombinedScoreboardEntry.put("share", partiesNotInTopThreeCombinedShare);
+
+        scoreboard.put("Others", partiesNotInTopThreeCombinedScoreboardEntry);
+
+        return scoreboard;
     }
 }
