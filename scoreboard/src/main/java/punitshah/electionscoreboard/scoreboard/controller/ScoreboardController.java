@@ -34,6 +34,10 @@ public class ScoreboardController {
         }
     }
 
+    public Map<String, Party> getPartyMap() {
+        return scoreboardModel.getParties();
+    }
+
     public List<Party> getPartyList() {
         return scoreboardModel.getPartyList();
     }

@@ -39,11 +39,11 @@ public class ScoreboardRestController {
 
     @GetMapping("/parties/{partyCode}")
     public ResponseEntity<Party> getParty(@PathVariable(name = "partyCode") String partyCode) {
-        return scoreboardController.getPartyList().stream()
-                .filter(party -> party.getPartyCode().equals(partyCode))
-                .findFirst()
-                .map(party -> new ResponseEntity<>(party, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        Party party = scoreboardController.getPartyMap().get(partyCode);
+
+        return party == null ?
+                new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                new ResponseEntity<>(party, HttpStatus.OK);
     }
 
     @GetMapping("/constituencies")
@@ -55,11 +55,9 @@ public class ScoreboardRestController {
     public ResponseEntity<Constituency> getConstituency(@PathVariable(name = "constituencyId") int constituencyId) {
         Constituency constituency = scoreboardController.getConstituency(constituencyId);
 
-        if (constituency == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(constituency, HttpStatus.OK);
-        }
+        return constituency == null ?
+                new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                new ResponseEntity<>(constituency, HttpStatus.OK);
     }
 
     @GetMapping("/scoreboard")
