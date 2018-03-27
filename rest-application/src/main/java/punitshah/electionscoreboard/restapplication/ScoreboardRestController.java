@@ -23,9 +23,13 @@ public class ScoreboardRestController {
     }
 
     @PostMapping("/constituency-results")
-    public void postConstituencyResults(@Validated @RequestBody ConstituencyResults constituencyResults) {
-        scoreboardController.updateConstituencies(constituencyResults);
-        scoreboardController.updateParties(constituencyResults);
+    public ResponseEntity postConstituencyResults(@Validated @RequestBody ConstituencyResults constituencyResults) {
+        if (scoreboardController.updateConstituencies(constituencyResults)) {
+            scoreboardController.updateParties(constituencyResults);
+            return new ResponseEntity(HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity(HttpStatus.CONFLICT);
+        }
     }
 
     @GetMapping("/parties")
@@ -49,11 +53,13 @@ public class ScoreboardRestController {
 
     @GetMapping("/constituencies/{constituencyId}")
     public ResponseEntity<Constituency> getConstituency(@PathVariable(name = "constituencyId") int constituencyId) {
-        return scoreboardController.getConstituencyList().stream()
-                .filter(constituency -> constituency.getConstituencyId() == constituencyId)
-                .findFirst()
-                .map(constituency -> new ResponseEntity<>(constituency, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        Constituency constituency = scoreboardController.getConstituency(constituencyId);
+
+        if (constituency == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(constituency, HttpStatus.OK);
+        }
     }
 
     @GetMapping("/scoreboard")
@@ -83,7 +89,7 @@ public class ScoreboardRestController {
                                     "%-6s\t%5d\t%5.1f", partyCode, seats, share.get(partyCode)
                             );
 
-                            return seats >= 326 ? partyResultString + " - Majority won" : partyResultString;
+                            return party.isMajorityWon() ? partyResultString + " - Majority won" : partyResultString;
                         })
                         .collect(Collectors.toList())
         );

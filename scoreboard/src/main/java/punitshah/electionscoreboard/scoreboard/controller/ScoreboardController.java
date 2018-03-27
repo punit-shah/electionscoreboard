@@ -19,9 +19,19 @@ public class ScoreboardController {
         return scoreboardModel.getSortedConstituencyList();
     }
 
-    public void updateConstituencies(ConstituencyResults constituencyResults) {
+    public Constituency getConstituency(int constituencyId) {
+        return scoreboardModel.getConstituencyById(constituencyId);
+    }
+
+    public boolean updateConstituencies(ConstituencyResults constituencyResults) {
         Constituency constituency = constituencyResults.getConstituencies().get(0);
-        scoreboardModel.addConstituency(constituency);
+
+        if (!scoreboardModel.checkConstituencyIsPresent(constituency.getConstituencyId())) {
+            scoreboardModel.addConstituency(constituency);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public List<Party> getPartyList() {

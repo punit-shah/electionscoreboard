@@ -26,20 +26,6 @@ public class ScoreboardModel {
         }
     }
 
-    public List<Constituency> getConstituencyList() {
-        return constituencies;
-    }
-
-    public List<Constituency> getSortedConstituencyList() {
-        return constituencies.stream()
-                .sorted(Comparator.comparingInt(Constituency::getConstituencyId))
-                .collect(Collectors.toList());
-    }
-
-    public void addConstituency(Constituency constituency) {
-        constituencies.add(constituency);
-    }
-
     public Map<String, Party> getParties() {
         return parties;
     }
@@ -67,5 +53,30 @@ public class ScoreboardModel {
 
     public void incrementSeatsForParty(String partyCode) {
         parties.get(partyCode).winSeat();
+    }
+
+    public List<Constituency> getConstituencyList() {
+        return constituencies;
+    }
+
+    public List<Constituency> getSortedConstituencyList() {
+        return constituencies.stream()
+                .sorted(Comparator.comparingInt(Constituency::getConstituencyId))
+                .collect(Collectors.toList());
+    }
+
+    public void addConstituency(Constituency constituency) {
+        constituencies.add(constituency);
+    }
+
+    public Constituency getConstituencyById(int constituencyId) {
+        return constituencies.stream()
+                .filter(constituency -> constituency.getConstituencyId() == constituencyId)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public boolean checkConstituencyIsPresent(int constituencyId) {
+        return getConstituencyById(constituencyId) != null;
     }
 }
