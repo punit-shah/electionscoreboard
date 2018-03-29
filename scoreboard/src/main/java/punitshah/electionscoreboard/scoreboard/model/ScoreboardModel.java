@@ -70,6 +70,13 @@ public class ScoreboardModel {
                 .orElse(null);
     }
 
+    private void updateParty(Party party, int votes, boolean winsSeat) {
+        party.updateVotes(votes);
+        if (winsSeat) {
+            party.winSeat();
+        }
+    }
+
     public Map<String, Party> getParties() throws SQLException {
         Map<String, Party> parties = new HashMap<>();
 
@@ -87,16 +94,10 @@ public class ScoreboardModel {
 
             if (parties.get(partyCode) == null) {
                 Party party = new Party(partyCode);
-                party.updateVotes(votes);
-                if (winsSeat) {
-                    party.winSeat();
-                }
+                updateParty(party, votes, winsSeat);
             } else {
                 Party party = parties.get(partyCode);
-                party.updateVotes(votes);
-                if (winsSeat) {
-                    party.winSeat();
-                }
+                updateParty(party, votes, winsSeat);
             }
         }
 
