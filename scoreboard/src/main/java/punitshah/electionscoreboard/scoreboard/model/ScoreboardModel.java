@@ -1,41 +1,117 @@
 package punitshah.electionscoreboard.scoreboard.model;
 
+import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class ScoreboardModel {
-    private Map<String, Party> parties;
-    private List<Constituency> constituencies;
+    private static final String DB_DRIVER = "org.postgresql.Driver";
+    private static final String DB_CONNECTION = "jdbc:postgresql:electionscoreboard";
+    private static final String DB_USER = "punit";
+    private static final String DB_PASSWORD = "password123";
 
-    public ScoreboardModel() {
-        parties = new HashMap<>();
-        constituencies = new ArrayList<>();
-    }
-
-    private void addPartyToMap(String partyCode) {
-        parties.put(partyCode, new Party(partyCode));
-    }
-
-    public boolean checkPartyIsPresent(String partyCode) {
-        return parties.get(partyCode) != null;
-    }
-
-    public void addParty(String partyCode) {
-        if (!checkPartyIsPresent(partyCode)) {
-            addPartyToMap(partyCode);
+    private Connection getDBConnection() throws SQLException {
+        try {
+            Class.forName(DB_DRIVER);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
+
+        return DriverManager.getConnection(DB_CONNECTION, DB_USER, DB_PASSWORD);
     }
 
-    public Map<String, Party> getParties() {
+    public void addConstituency(Constituency constituency) throws SQLException {
+        int constituencyId = constituency.getConstituencyId();
+        String constituencyName = constituency.getConstituencyName();
+        List<ConstituencyParty> parties = constituency.getParties();
+        ConstituencyParty winningParty = getWinningConstituencyParty(parties);
+
+        Connection connection = getDBConnection();
+        Statement statement = connection.createStatement();
+        statement.executeUpdate(
+                "INSERT INTO constituency(constituency_id, constituency_name) " +
+                "VALUES (" + constituencyId + ", '" + constituencyName + "');"
+        );
+
+        for (ConstituencyParty party : parties) {
+            boolean winsSeat = party.getPartyCode().equals(winningParty.getPartyCode());
+            addParty(party, constituencyId, winsSeat);
+        }
+
+        statement.close();
+        connection.close();
+    }
+
+    public void addParty(
+            ConstituencyParty party,
+            int constituencyId,
+            boolean winsSeat
+    ) throws SQLException {
+        String partyCode = party.getPartyCode();
+        int votes = party.getVotes();
+        double share = party.getShare();
+
+        Connection connection = getDBConnection();
+        Statement statement = connection.createStatement();
+
+        statement.executeUpdate(
+                "INSERT INTO party(party_code, votes, share, constituency_id, wins_seat) " +
+                        "VALUES ('" + partyCode + "', " + votes + ", " + share + ", " +
+                        constituencyId + ", " + winsSeat + ")"
+        );
+
+        statement.close();
+        connection.close();
+    }
+
+    public ConstituencyParty getWinningConstituencyParty(List<ConstituencyParty> parties) {
+        return parties.stream()
+                .max(Comparator.comparingDouble(ConstituencyParty::getShare))
+                .orElse(null);
+    }
+
+    public Map<String, Party> getParties() throws SQLException {
+        Map<String, Party> parties = new HashMap<>();
+
+        Connection connection = getDBConnection();
+        Statement statement = connection.createStatement();
+
+        ResultSet resultSet = statement.executeQuery(
+                "SELECT party_code, votes, wins_seat FROM party;"
+        );
+
+        while (resultSet.next()) {
+            String partyCode = resultSet.getString("party_code");
+            int votes = resultSet.getInt("votes");
+            boolean winsSeat = resultSet.getBoolean("wins_seat");
+
+            if (parties.get(partyCode) == null) {
+                Party party = new Party(partyCode);
+                party.updateVotes(votes);
+                if (winsSeat) {
+                    party.winSeat();
+                }
+            } else {
+                Party party = parties.get(partyCode);
+                party.updateVotes(votes);
+                if (winsSeat) {
+                    party.winSeat();
+                }
+            }
+        }
+
+        statement.close();
+        connection.close();
+
         return parties;
     }
 
-    public List<Party> getPartyList() {
-        return new ArrayList<>(parties.values());
+    public List<Party> getPartyList() throws SQLException {
+        return new ArrayList<>(getParties().values());
     }
 
-    public List<Party> getSortedPartyList() {
-        return parties.values().stream()
+    public List<Party> getSortedPartyList() throws SQLException {
+        return getParties().values().stream()
                 .sorted((party1, party2) -> {
                     int seatsComparison = party2.getSeats() - party1.getSeats();
                     if (seatsComparison != 0) {
@@ -47,36 +123,98 @@ public class ScoreboardModel {
                 .collect(Collectors.toList());
     }
 
-    public void updateVotesForParty(String partyCode, int votesToAdd) {
-        parties.get(partyCode).updateVotes(votesToAdd);
+    private List<ConstituencyParty> getConstituencyParties(int constituencyId) throws SQLException {
+        List<ConstituencyParty> constituencyParties = new ArrayList<>();
+
+        Connection connection = getDBConnection();
+        Statement statement = connection.createStatement();
+
+        ResultSet partyResultSet = statement.executeQuery(
+                "SELECT party_code, votes, share FROM party " +
+                        "WHERE constituency_id=" + constituencyId + ";"
+        );
+
+        while (partyResultSet.next()) {
+            String partyCode = partyResultSet.getString("party_code");
+            int votes = partyResultSet.getInt("votes");
+            double share = partyResultSet.getDouble("share");
+
+            ConstituencyParty party = new ConstituencyParty();
+            party.setPartyCode(partyCode);
+            party.setVotes(votes);
+            party.setShare(share);
+
+            constituencyParties.add(party);
+        }
+
+        statement.close();
+        connection.close();
+
+        return constituencyParties;
     }
 
-    public void incrementSeatsForParty(String partyCode) {
-        parties.get(partyCode).winSeat();
-    }
+    public List<Constituency> getConstituencyList() throws SQLException {
+        List<Constituency> constituencies = new ArrayList<>();
 
-    public List<Constituency> getConstituencyList() {
+        Connection connection = getDBConnection();
+        Statement statement = connection.createStatement();
+
+        ResultSet constituencyResultSet = statement.executeQuery(
+                "SELECT constituency_id, constituency_name FROM constituency " +
+                        "ORDER BY constituency_id;"
+        );
+
+        while (constituencyResultSet.next()) {
+            int constituencyId = constituencyResultSet.getInt("constituency_id");
+            String constituencyName = constituencyResultSet.getString("constituency_name");
+
+            List<ConstituencyParty> parties = getConstituencyParties(constituencyId);
+
+            Constituency constituency = new Constituency();
+            constituency.setConstituencyId(constituencyId);
+            constituency.setConstituencyName(constituencyName);
+            constituency.setParties(parties);
+
+            constituencies.add(constituency);
+        }
+
+        statement.close();
+        connection.close();
+
         return constituencies;
     }
 
-    public List<Constituency> getSortedConstituencyList() {
-        return constituencies.stream()
-                .sorted(Comparator.comparingInt(Constituency::getConstituencyId))
-                .collect(Collectors.toList());
+    public Constituency getConstituencyById(int constituencyId) throws SQLException {
+        Constituency constituency;
+
+        Connection connection = getDBConnection();
+        Statement statement = connection.createStatement();
+
+        ResultSet constituencyResultSet = statement.executeQuery(
+                "SELECT constituency_name FROM constituency " +
+                        "WHERE constituency_id=" + constituencyId + ";"
+        );
+
+        while (constituencyResultSet.next()) {
+            String constituencyName = constituencyResultSet.getString("constituency_name");
+
+            List<ConstituencyParty> parties = getConstituencyParties(constituencyId);
+
+            constituency = new Constituency();
+            constituency.setConstituencyId(constituencyId);
+            constituency.setConstituencyName(constituencyName);
+            constituency.setParties(parties);
+
+            return constituency;
+        }
+
+        statement.close();
+        connection.close();
+
+        return null;
     }
 
-    public void addConstituency(Constituency constituency) {
-        constituencies.add(constituency);
-    }
-
-    public Constituency getConstituencyById(int constituencyId) {
-        return constituencies.stream()
-                .filter(constituency -> constituency.getConstituencyId() == constituencyId)
-                .findFirst()
-                .orElse(null);
-    }
-
-    public boolean checkConstituencyIsPresent(int constituencyId) {
+    public boolean checkConstituencyIsPresent(int constituencyId) throws SQLException {
         return getConstituencyById(constituencyId) != null;
     }
 }
