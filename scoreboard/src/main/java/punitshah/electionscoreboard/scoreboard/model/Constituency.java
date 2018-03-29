@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import java.util.List;
 
 public class Constituency {
-    private int seqNo;
     private int constituencyId;
 
     @NotBlank(message = "consituencyName cannot be blank")
@@ -18,15 +17,6 @@ public class Constituency {
     @NotEmpty(message = "results cannot be empty")
     @Valid
     private List<ConstituencyParty> parties;
-
-    @XmlAttribute
-    public int getSeqNo() {
-        return seqNo;
-    }
-
-    public void setSeqNo(int seqNo) {
-        this.seqNo = seqNo;
-    }
 
     @XmlElement(name = "consituencyId")
     public int getConstituencyId() {
