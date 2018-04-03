@@ -33,7 +33,7 @@ public class ScoreboardRestController {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            return null;
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
