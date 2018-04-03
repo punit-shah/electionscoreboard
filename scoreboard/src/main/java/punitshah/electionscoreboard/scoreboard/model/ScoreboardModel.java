@@ -95,6 +95,7 @@ public class ScoreboardModel {
             if (parties.get(partyCode) == null) {
                 Party party = new Party(partyCode);
                 updateParty(party, votes, winsSeat);
+                parties.put(partyCode, party);
             } else {
                 Party party = parties.get(partyCode);
                 updateParty(party, votes, winsSeat);
