@@ -10,7 +10,6 @@ import punitshah.electionscoreboard.scoreboard.model.Constituency;
 import punitshah.electionscoreboard.scoreboard.model.ConstituencyResults;
 import punitshah.electionscoreboard.scoreboard.model.Party;
 
-import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,37 +24,22 @@ public class ScoreboardRestController {
 
     @PostMapping("/constituency-results")
     public ResponseEntity postConstituencyResults(@Validated @RequestBody ConstituencyResults constituencyResults) {
-        try {
-            if (scoreboardController.updateConstituencies(constituencyResults)) {
-                return new ResponseEntity(HttpStatus.CREATED);
-            } else {
-                return new ResponseEntity(HttpStatus.CONFLICT);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        if (scoreboardController.updateConstituencies(constituencyResults)) {
+            scoreboardController.updateParties(constituencyResults);
+            return new ResponseEntity(HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity(HttpStatus.CONFLICT);
         }
-
     }
 
     @GetMapping("/parties")
     public List<Party> getParties() {
-        try {
-            return scoreboardController.getSortedPartyList();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return scoreboardController.getSortedPartyList();
     }
 
     @GetMapping("/parties/{partyCode}")
     public ResponseEntity<Party> getParty(@PathVariable(name = "partyCode") String partyCode) {
-        Party party = null;
-        try {
-            party = scoreboardController.getPartyMap().get(partyCode);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        Party party = scoreboardController.getPartyMap().get(partyCode);
 
         return party == null ?
                 new ResponseEntity<>(HttpStatus.NOT_FOUND) :
@@ -64,22 +48,12 @@ public class ScoreboardRestController {
 
     @GetMapping("/constituencies")
     public List<Constituency> getConstituencies() {
-        try {
-            return scoreboardController.getConstituencyList();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return scoreboardController.getSortedConstituencyList();
     }
 
     @GetMapping("/constituencies/{constituencyId}")
     public ResponseEntity<Constituency> getConstituency(@PathVariable(name = "constituencyId") int constituencyId) {
-        Constituency constituency = null;
-        try {
-            constituency = scoreboardController.getConstituency(constituencyId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        Constituency constituency = scoreboardController.getConstituency(constituencyId);
 
         return constituency == null ?
                 new ResponseEntity<>(HttpStatus.NOT_FOUND) :
@@ -88,44 +62,36 @@ public class ScoreboardRestController {
 
     @GetMapping("/scoreboard")
     public Map<String, Map<String, Object>> getScoreboard() {
-         try {
-            List<Party> topThreeParties = scoreboardController.getTopThreeParties();
-            List<Party> partiesNotInTopThree = scoreboardController.getPartiesNotInTopThree();
-            Map<String, Double> share = scoreboardController.calculateShare();
+        List<Party> topThreeParties = scoreboardController.getTopThreeParties();
+        List<Party> partiesNotInTopThree = scoreboardController.getPartiesNotInTopThree();
+        Map<String, Double> share = scoreboardController.calculateShare();
 
-            Map<String, Map<String, Object>> scoreboard = new LinkedHashMap<>();
+        Map<String, Map<String, Object>> scoreboard = new LinkedHashMap<>();
 
-            topThreeParties.forEach(party -> {
-                Map<String, Object> scoreboardEntry = new LinkedHashMap<>();
+        topThreeParties.forEach(party -> {
+            Map<String, Object> scoreboardEntry = new LinkedHashMap<>();
 
-                String partyCode = party.getPartyCode();
+            String partyCode = party.getPartyCode();
 
-                scoreboardEntry.put("seats", party.getSeats());
-                scoreboardEntry.put("share", share.get(partyCode));
-                scoreboardEntry.put("majorityWon", party.isMajorityWon());
+            scoreboardEntry.put("seats", party.getSeats());
+            scoreboardEntry.put("share", share.get(partyCode));
+            scoreboardEntry.put("majorityWon", party.isMajorityWon());
 
-                scoreboard.put(partyCode, scoreboardEntry);
-            });
+            scoreboard.put(partyCode, scoreboardEntry);
+        });
 
-            Map<String, Object> partiesNotInTopThreeCombinedScoreboardEntry = new LinkedHashMap<>();
-            double partiesNotInTopThreeCombinedShare = 0.0;
+        Map<String, Object> partiesNotInTopThreeCombinedScoreboardEntry = new LinkedHashMap<>();
+        double partiesNotInTopThreeCombinedShare = 0.0;
 
-            for (Party party: partiesNotInTopThree) {
-                partiesNotInTopThreeCombinedShare += share.get(party.getPartyCode());
-            }
-
-            partiesNotInTopThreeCombinedScoreboardEntry.put(
-                    "seats",
-                    scoreboardController.getTotalSeats(partiesNotInTopThree)
-            );
-            partiesNotInTopThreeCombinedScoreboardEntry.put("share", partiesNotInTopThreeCombinedShare);
-
-            scoreboard.put("Others", partiesNotInTopThreeCombinedScoreboardEntry);
-
-            return scoreboard;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+        for (Party party: partiesNotInTopThree) {
+            partiesNotInTopThreeCombinedShare += share.get(party.getPartyCode());
         }
+
+        partiesNotInTopThreeCombinedScoreboardEntry.put("seats", scoreboardController.getTotalSeats(partiesNotInTopThree));
+        partiesNotInTopThreeCombinedScoreboardEntry.put("share", partiesNotInTopThreeCombinedShare);
+
+        scoreboard.put("Others", partiesNotInTopThreeCombinedScoreboardEntry);
+
+        return scoreboard;
     }
 }
